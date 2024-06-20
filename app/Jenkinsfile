@@ -2,15 +2,15 @@ pipeline {
     agent any
   
     stages {
-        stage('Checkout') {
-            steps {
-                sh 'pwd'
-                sh 'echo passed!!!!'
-                git branch: 'main', url: 'https://github.com/Duocpv0101/nginx-argocd.git' 
-                sh 'pwd'
-                sh 'ls'
-            }
-        }
+        // stage('Checkout') {
+        //     steps {
+        //         sh 'pwd'
+        //         sh 'echo passed!!!!'
+        //         git branch: 'main', url: 'https://github.com/Duocpv0101/nginx-argocd.git' 
+        //         sh 'pwd'
+        //         sh 'ls'
+        //     }
+        // }
         stage('Build and Push Docker Image') {
             environment {
                 DOCKER_IMAGE = "duocpv1101/devopslab:${BUILD_NUMBER}"
