@@ -14,12 +14,11 @@ pipeline {
         stage('Build and Push Docker Image') {
             environment {
                 DOCKER_IMAGE = "duocpv1101/devopslab:${BUILD_NUMBER}"
-                DOCKERFILE_LOCATION = "argocd-guide/app/Dockerfile"
                 REGISTRY_CREDENTIALS = credentials('docker-hub')
             }
             steps {
                 script {
-                    sh 'cd ${DOCKERFILE_LOCATION} && docker build -t ${DOCKER_IMAGE} .'
+                    sh 'cd app && docker build -t ${DOCKER_IMAGE} .'
                     def dockerImage = docker.image("${DOCKER_IMAGE}")
                     docker.withRegistry('https://registry.hub.docker.com', "${REGISTRY_CREDENTIALS}") {
                         dockerImage.push()
