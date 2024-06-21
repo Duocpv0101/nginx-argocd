@@ -13,14 +13,14 @@ pipeline {
         }
         stage('Build and Push Docker Image') {
             environment {
-                DOCKER_IMAGE = "duocpv1101/devopslab:${BUILD_NUMBER}"
+                REGISTRY = "duocpv1101/devopslab"
                 REGISTRY_CREDENTIALS = credentials('docker-hub')
             }
             steps {
                 script {
-                    sh 'cd app && docker build -t ${DOCKER_IMAGE} .'
-                    docker.withRegistry('https://registry.hub.docker.com', ${REGISTRY_CREDENTIALS}) {
-                        def dockerImage = docker.image("${DOCKER_IMAGE}")
+                    sh 'cd app'
+                    docker.withRegistry('', ${REGISTRY_CREDENTIALS}) {
+                        def dockerImage = docker.build registry + ":$BUILD_NUMBER"
                         dockerImage.push()
                     }
                 }
