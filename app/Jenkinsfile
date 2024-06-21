@@ -11,22 +11,22 @@ pipeline {
                 sh 'ls'
             }
         }
-        // stage('Build and Push Docker Image') {
-        //     environment {
-        //         DOCKER_IMAGE = "duocpv1101/devopslab:${BUILD_NUMBER}"
-        //         DOCKERFILE_LOCATION = "argocd-guide/app/Dockerfile"
-        //         REGISTRY_CREDENTIALS = credentials('docker-hub')
-        //     }
-        //     steps {
-        //         script {
-        //             sh 'cd ${DOCKERFILE_LOCATION} && docker build -t ${DOCKER_IMAGE} .'
-        //             def dockerImage = docker.image("${DOCKER_IMAGE}")
-        //             docker.withRegistry('https://registry.hub.docker.com', "${REGISTRY_CREDENTIALS}") {
-        //                 dockerImage.push()
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Build and Push Docker Image') {
+            environment {
+                DOCKER_IMAGE = "duocpv1101/devopslab:${BUILD_NUMBER}"
+                DOCKERFILE_LOCATION = "argocd-guide/app/Dockerfile"
+                REGISTRY_CREDENTIALS = credentials('docker-hub')
+            }
+            steps {
+                script {
+                    sh 'cd ${DOCKERFILE_LOCATION} && docker build -t ${DOCKER_IMAGE} .'
+                    def dockerImage = docker.image("${DOCKER_IMAGE}")
+                    docker.withRegistry('https://registry.hub.docker.com', "${REGISTRY_CREDENTIALS}") {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
         // stage('Update Deployment File') {
         //     environment {
         //         GIT_REPO_NAME = "ultimate-cicd" ## replace with your github repository name
