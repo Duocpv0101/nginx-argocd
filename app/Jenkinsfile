@@ -6,7 +6,7 @@ pipeline {
             steps {
                 sh 'pwd'
                 sh 'echo passed!!!!'
-                git 'https://github.com/Duocpv0101/nginx-argocd.git' 
+                git branch: 'main', credentialsId: 'github', url: 'https://github.com/Duocpv0101/nginx-argocd.git' 
                 sh 'pwd'
                 sh 'ls'
             }
