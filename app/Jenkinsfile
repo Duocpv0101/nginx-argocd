@@ -19,8 +19,8 @@ pipeline {
             steps {
                 script {
                     sh 'cd app && docker build -t ${DOCKER_IMAGE} .'
-                    def dockerImage = docker.image("${DOCKER_IMAGE}")
-                    docker.withRegistry('https://registry.hub.docker.com', "${REGISTRY_CREDENTIALS}") {
+                    docker.withRegistry('https://registry.hub.docker.com', ${REGISTRY_CREDENTIALS}) {
+                        def dockerImage = docker.image("${DOCKER_IMAGE}")
                         dockerImage.push()
                     }
                 }
