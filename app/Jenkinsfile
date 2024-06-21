@@ -21,7 +21,7 @@ pipeline {
                 script {
                     sh 'cd app'
                     sh 'ls -al'
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER" -f app/Dockerfile
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER" -f app/Dockerfile .
                     docker.withRegistry( '', registryCredential ) {
                     dockerImage.push()
                     }
