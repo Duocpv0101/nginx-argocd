@@ -20,7 +20,9 @@ pipeline {
             steps {
                 script {
                     dockerImage = docker.build("registry:${BUILD_NUMBER}", "app"}
-                    docker.withRegistry( '', registryCredential ) {
+                    def customImage = docker.build("my-image:${env.BUILD_ID}", "-f ${dockerfile} ./dockerfiles")
+
+                    withDockerRegistry(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
                     dockerImage.push()
                     }
                 }
