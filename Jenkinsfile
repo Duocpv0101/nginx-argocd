@@ -25,11 +25,11 @@ pipeline {
             }
         }
         stage('Build and Push Docker Image') {
-            steps {
-                environment {
-                    OLDTAG = sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
-                    NEWTAG = "${OLDTAG.toInteger() + 1}"
+            environment {
+                    OLDTAG=sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
+                    NEWTAG="${OLDTAG.toInteger() + 1}"
                 }
+            steps {
                 script {
                     dockerImage = docker.build("${REGISTRY}:${NEWTAG}", "-f app/Dockerfile app")
                     withDockerRegistry(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
@@ -39,14 +39,14 @@ pipeline {
             }
         }
         stage('Update Deployment File') {
-            steps {
-                environment {
-                    OLDTAG = sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
-                    NEWTAG = "${OLDTAG.toInteger() + 1}"
-                    OLDIMG = sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|awk -F'/' '{print \$2}'", returnStdout: true).trim()
-                    REPIMG = sh(script: "echo ${OLDIMG}|awk -F':' '{print \$1}'", returnStdout: true).trim()
-                    NEWIMG = "${REPIMG}:${NEWTAG}"
+            environment {
+                    OLDTAG=sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
+                    NEWTAG="${OLDTAG.toInteger() + 1}"
+                    OLDIMG=sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|awk -F'/' '{print \$2}'", returnStdout: true).trim()
+                    REPIMG=sh(script: "echo ${OLDIMG}|awk -F':' '{print \$1}'", returnStdout: true).trim()
+                    NEWIMG="${REPIMG}:${NEWTAG}"
                 }
+            steps {
                 withCredentials([string(credentialsId: 'gittoken', variable: 'GITHUB_TOKEN')]) {
                     sh '''
                         cd manifest
