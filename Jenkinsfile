@@ -13,13 +13,13 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', credentialsId: 'github', url: 'https://github.com/Duocpv0101/nginx-argocd.git' 
+                git branch: 'main', credentialsId: 'github', url: 'https://github.com/Duocpv0101/nginx-argocd.git'
             }
         }
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${REGISTRY}:${NEWTAG}", "-f app/Dockerfile app")
+                    dockerImage = docker.build("${REGISTRY}:${NEWTAG}")
                     withDockerRegistry(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
                     dockerImage.push()
                     }
