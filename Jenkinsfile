@@ -2,12 +2,6 @@ pipeline {
     agent any
     environment {
         REGISTRY = "duocpv1101/devopslab"
-        // Tag images
-        // OLDTAG = sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
-        // NEWTAG = "${OLDTAG.toInteger() + 1}"
-        // OLDIMG = sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|awk -F'/' '{print \$2}'", returnStdout: true).trim()
-        // REPIMG = sh(script: "echo ${OLDIMG}|awk -F':' '{print \$1}'", returnStdout: true).trim()
-        // NEWIMG = "${REPIMG}:${NEWTAG}"
     }
   
     stages {
@@ -20,13 +14,11 @@ pipeline {
                 dir('manifest'){
                     git branch: 'main', credentialsId: 'github', url: 'https://github.com/Duocpv0101/nginx-argocd-manifest.git'
                 }
-                sh 'ls -al app'
-                sh 'ls -al manifest'
             }
         }
         stage('Build and Push Docker Image') {
             environment {
-                    OLDTAG=sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
+                    OLDTAG=sh(script: "cat manifest/app/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
                     NEWTAG="${OLDTAG.toInteger() + 1}"
                 }
             steps {
@@ -41,9 +33,9 @@ pipeline {
         }
         stage('Update Deployment File') {
             environment {
-                    OLDTAG=sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
+                    OLDTAG=sh(script: "cat manifest/app/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
                     NEWTAG="${OLDTAG.toInteger() + 1}"
-                    OLDIMG=sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|awk -F'/' '{print \$2}'", returnStdout: true).trim()
+                    OLDIMG=sh(script: "cat manifest/app/deployment.yaml |grep image |awk '{print \$2}'|awk -F'/' '{print \$2}'", returnStdout: true).trim()
                     REPIMG=sh(script: "echo ${OLDIMG}|awk -F':' '{print \$1}'", returnStdout: true).trim()
                     NEWIMG="${REPIMG}:${NEWTAG}"
                 }
@@ -53,8 +45,8 @@ pipeline {
                         cd manifest
                         git config user.email "duocpv1101@gmail.com"
                         git config user.name "Duocpv0101"
-                        sed -i "s/${OLDIMG}/${NEWIMG}/g" deployment.yaml
-                        git add deployment.yaml
+                        sed -i "s/${OLDIMG}/${NEWIMG}/g" app/deployment.yaml
+                        git add app/deployment.yaml
                         git commit -m "Update deployment image to version ${NEWTAG}"
                         git push -f https://${GITHUB_TOKEN}@github.com/Duocpv0101/nginx-argocd-manifest.git HEAD:main
                     '''
