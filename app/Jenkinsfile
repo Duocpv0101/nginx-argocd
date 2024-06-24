@@ -35,7 +35,7 @@ pipeline {
                         sed -i "s/${OLDIMG}/${NEWIMG}/g" app-manifest/deployment.yaml
                         git add app-manifest/deployment.yaml
                         git commit -m "Update deployment image to version ${TAGVER}"
-                        git push https://${GITHUB_TOKEN}@github.com/Duocpv0101/nginx-argocd.git HEAD:main
+                        git push -f https://${GITHUB_TOKEN}@github.com/Duocpv0101/nginx-argocd.git HEAD:main
                     '''
                 }
             }
