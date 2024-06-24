@@ -27,6 +27,8 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
+                    OLDTAG = sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
+                    NEWTAG = "${OLDTAG.toInteger() + 1}"
                     dockerImage = docker.build("${REGISTRY}:${NEWTAG}", "-f app/Dockerfile app")
                     withDockerRegistry(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
                     dockerImage.push()
