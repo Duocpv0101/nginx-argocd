@@ -1,11 +1,5 @@
-FROM python:3.9-slim
+FROM python:3.8-slim-buster
 
-WORKDIR /
-COPY requirements.txt .
+ADD app.py /
 
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-
-EXPOSE 80
-
-CMD ["python", "app.py"]
+CMD [ "python", "./app.py" ]
