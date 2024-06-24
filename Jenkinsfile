@@ -34,6 +34,7 @@ pipeline {
                     dockerImage = docker.build("${REGISTRY}:${NEWTAG}", "-f app/Dockerfile app")
                     withDockerRegistry(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
                     dockerImage.push()
+                    sh "docker rmi ${REGISTRY}:${NEWTAG}"
                     }
                 }
             }
@@ -58,15 +59,6 @@ pipeline {
                         git push -f https://${GITHUB_TOKEN}@github.com/Duocpv0101/nginx-argocd-manifest.git HEAD:main
                     '''
                 }
-            }
-        }
-        stage('Remove Unused docker image') {
-            environment {
-                    OLDTAG=sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
-                    NEWTAG="${OLDTAG.toInteger() + 1}"
-                }
-            steps{
-                sh "docker rmi ${REGISTRY}:${NEWTAG}"
             }
         }
     }
