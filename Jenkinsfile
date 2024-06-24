@@ -54,7 +54,7 @@ pipeline {
                         git config user.name "Duocpv0101"
                         sed -i "s/${OLDIMG}/${NEWIMG}/g" deployment.yaml
                         git add deployment.yaml
-                        git commit -m "Update deployment image to version ${NEWIMG}"
+                        git commit -m "Update deployment image to version ${NEWTAG}"
                         git push -f https://${GITHUB_TOKEN}@github.com/Duocpv0101/nginx-argocd-manifest.git HEAD:main
                     '''
                 }
@@ -62,7 +62,7 @@ pipeline {
         }
         stage('Remove Unused docker image') {
             steps{
-                sh "docker rmi ${REGISTRY}:${NEWTAG}"
+                sh "docker rmi ${REGISTRY}:${NEWIMG}"
             }
         }
     }
