@@ -11,7 +11,7 @@ pipeline {
     }
   
     stages {
-         stage('Checkout') {
+        stage('Checkout') {
             steps {
                 sh 'mkdir -p app manifest'
                 dir('app'){
@@ -61,8 +61,12 @@ pipeline {
             }
         }
         stage('Remove Unused docker image') {
+            environment {
+                    OLDTAG=sh(script: "cat manifest/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
+                    NEWTAG="${OLDTAG.toInteger() + 1}"
+                }
             steps{
-                sh "docker rmi ${REGISTRY}:${NEWIMG}"
+                sh "docker rmi ${REGISTRY}:${NEWTAG}"
             }
         }
     }
