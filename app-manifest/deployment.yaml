@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: duocpv1101/devopslab:34
+        image: duocpv1101/devopslab:35
         ports:
         - containerPort: 80
