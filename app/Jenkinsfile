@@ -2,7 +2,6 @@ pipeline {
     agent any
     environment {
         REGISTRY = "duocpv1101/devopslab"
-        //Tag Images
         OLDTAG = sh(script: "cat app-manifest/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
         NEWTAG = "${OLDTAG.toInteger() + 1}"
         OLDIMG = sh(script: "cat app-manifest/deployment.yaml |grep image |awk '{print \$2}'|awk -F'/' '{print \$2}'", returnStdout: true).trim()
