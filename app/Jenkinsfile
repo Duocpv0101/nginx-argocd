@@ -32,7 +32,7 @@ pipeline {
                     sh '''
                         git config user.email "duocpv1101@gmail.com"
                         git config user.name "Duocpv0101"
-                        sed -i "s/${OLDIMG}/${NEWIMG}}/g" app-manifest/deployment.yaml
+                        sed -i "s/${OLDIMG}/${NEWIMG}/g" app-manifest/deployment.yaml
                         git add app-manifest/deployment.yaml
                         git commit -m "Update deployment image to version ${TAGVER}"
                         git push https://${GITHUB_TOKEN}@github.com/Duocpv0101/nginx-argocd.git HEAD:main
