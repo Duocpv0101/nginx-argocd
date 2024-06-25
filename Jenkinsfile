@@ -16,11 +16,21 @@ pipeline {
                 }
             }
         }
-        stage('Build and Push Docker Image') {
-            environment {
-                    OLDTAG=sh(script: "cat manifest/app/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
-                    NEWTAG="${OLDTAG.toInteger() + 1}"
+        stage('Set ENV') {
+            steps {
+                script {
+                    def OLDTAG = sh(script: "cat manifest/app/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
+                    def NEWTAG = "${OLDTAG.toInteger() + 1}"
+                    def OLDIMG = sh(script: "cat manifest/app/deployment.yaml |grep image |awk '{print \$2}'|awk -F'/' '{print \$2}'", returnStdout: true).trim()
+                    def REPIMG = sh(script: "echo ${OLDIMG}|awk -F':' '{print \$1}'", returnStdout: true).trim()
+                    def NEWIMG = "${REPIMG}:${NEWTAG}"
+                    env.NEWIMG = NEWIMG
+                    env.OLDIMG = OLDIMG
+                    env.NEWTAG = NEWTAG
                 }
+            }
+        }
+        stage('Build and Push Docker Image') {
             steps {
                 script {
                     dockerImage = docker.build("${REGISTRY}:${NEWTAG}", "-f app/Dockerfile app")
@@ -32,13 +42,6 @@ pipeline {
             }
         }
         stage('Update Deployment File') {
-            environment {
-                    OLDTAG=sh(script: "cat manifest/app/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
-                    NEWTAG="${OLDTAG.toInteger() + 1}"
-                    OLDIMG=sh(script: "cat manifest/app/deployment.yaml |grep image |awk '{print \$2}'|awk -F'/' '{print \$2}'", returnStdout: true).trim()
-                    REPIMG=sh(script: "echo ${OLDIMG}|awk -F':' '{print \$1}'", returnStdout: true).trim()
-                    NEWIMG="${REPIMG}:${NEWTAG}"
-                }
             steps {
                 withCredentials([string(credentialsId: 'gittoken', variable: 'GITHUB_TOKEN')]) {
                     sh '''
