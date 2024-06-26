@@ -31,9 +31,9 @@ pipeline {
             }
             steps {
                 script {
-                    def OLDTAG = sh(script: "cat manifest/app/deployment-app2.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
+                    def OLDTAG = sh(script: "cat manifest/app2/deployment.yaml |grep image |awk '{print \$2}'|cut -d ':' -f 2", returnStdout: true).trim()
                     def NEWTAG = "${OLDTAG.toInteger() + 1}"
-                    def OLDIMG = sh(script: "cat manifest/app/deployment-app2.yaml |grep image |awk '{print \$2}'|awk -F'/' '{print \$2}'", returnStdout: true).trim()
+                    def OLDIMG = sh(script: "cat manifest/app2/deployment.yaml |grep image |awk '{print \$2}'|awk -F'/' '{print \$2}'", returnStdout: true).trim()
                     def REPIMG = sh(script: "echo ${OLDIMG}|awk -F':' '{print \$1}'", returnStdout: true).trim()
                     def NEWIMG = "${REPIMG}:${NEWTAG}"
                     env.NEWIMG = NEWIMG
@@ -72,8 +72,8 @@ pipeline {
                         cd manifest
                         git config user.email "duocpv1101@gmail.com"
                         git config user.name "Duocpv0101"
-                        sed -i "s/${OLDIMG}/${NEWIMG}/g" app/deployment-app2.yaml
-                        git add app/deployment-app2.yaml
+                        sed -i "s/${OLDIMG}/${NEWIMG}/g" app2/deployment.yaml
+                        git add app2/deployment.yaml
                         git commit -m "Update deployment image to version ${NEWTAG}"
                         git push -f https://${GITHUB_TOKEN}@github.com/Duocpv0101/nginx-argocd-manifest.git HEAD:main
                     '''
