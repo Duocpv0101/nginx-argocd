@@ -7,9 +7,10 @@ pipeline {
     stages {
         stage('Checkout') {
             when {
+                beforeAgent true
                 anyOf {
                     changeset 'app2/**'
-                    expression { params.MANUAL_BUILD == true }
+                    triggeredBy cause: 'UserIdCause'
                 }
             }
             steps {
@@ -24,9 +25,10 @@ pipeline {
         }
         stage('Set ENV') {
             when {
+                beforeAgent true
                 anyOf {
                     changeset 'app2/**'
-                    expression { params.MANUAL_BUILD == true }
+                    triggeredBy cause: 'UserIdCause'
                 }
             }
             steps {
@@ -44,9 +46,10 @@ pipeline {
         }
         stage('Build and Push Docker Image') {
             when {
+                beforeAgent true
                 anyOf {
                     changeset 'app2/**'
-                    expression { params.MANUAL_BUILD == true }
+                    triggeredBy cause: 'UserIdCause'
                 }
             }
             steps {
@@ -61,9 +64,10 @@ pipeline {
         }
         stage('Update Deployment File') {
             when {
+                beforeAgent true
                 anyOf {
                     changeset 'app2/**'
-                    expression { params.MANUAL_BUILD == true }
+                    triggeredBy cause: 'UserIdCause'
                 }
             }
             steps {
